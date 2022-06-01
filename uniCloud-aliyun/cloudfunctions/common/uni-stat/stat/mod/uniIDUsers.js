@@ -25,7 +25,7 @@ module.exports = class UniIDUsers extends BaseMod {
 		}
 		const condition = this.getCondition(appid, platform, channel, version, registerTime)
 		let userCount = 0
-		const userCountRes = await this.getCollection(this.tableName, this.tablePrefix).where(condition).count()
+		const userCountRes = await this.getCollection(this.tableName).where(condition).count()
 		if(userCountRes && userCountRes.total > 0) {
 			userCount = userCountRes.total
 		}
@@ -49,7 +49,7 @@ module.exports = class UniIDUsers extends BaseMod {
 		let uids = []
 		const uidsRes = await this.selectAll(this.tableName, condition, {
 			_id: 1
-		}, this.tablePrefix)
+		})
 
 		for (const u in uidsRes.data) {
 			uids.push(uidsRes.data[u]._id)
