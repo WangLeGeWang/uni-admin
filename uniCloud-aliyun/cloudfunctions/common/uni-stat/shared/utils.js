@@ -85,7 +85,9 @@ function parseUrlParams(primitiveParams, context) {
 			//当前服务空间编号
 			spid: 'spaceId',
 			//当前服务空间提供商
-			sppd: 'provider'
+			sppd: 'provider',
+			//应用版本号
+			v: 'appVersion'
 		}
 	} else if (context.hasOwnProperty('APPID')) {
 		convertParams = {

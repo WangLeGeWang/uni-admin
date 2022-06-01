@@ -186,12 +186,12 @@ module.exports = class ErrorResult extends BaseMod {
 
 		// 版本信息
 		let versionInfo = null
-		const versionKey = data._id.appid + '_' + platformInfo._id + '_' + data._id.version
+		const versionKey = data._id.appid + '_' + data._id.platform + '_' + data._id.version
 		if (this.versions && this.versions[versionKey]) {
 			versionInfo = this.versions[versionKey]
 		} else {
 			const version = new Version()
-			versionInfo = await version.getVersionAndCreate(data._id.appid, platformInfo._id, data._id.version)
+			versionInfo = await version.getVersionAndCreate(data._id.appid, data._id.platform, data._id.version)
 			if (!versionInfo || versionInfo.length === 0) {
 				versionInfo._id = ''
 			}
@@ -301,7 +301,7 @@ module.exports = class ErrorResult extends BaseMod {
 			}
 		} else {
 			const delRes = await this.delete(this.tableName, {
-				type: 'js',
+				type: 'crash',
 				start_time: this.startTime,
 				end_time: this.endTime
 			})
@@ -381,6 +381,7 @@ module.exports = class ErrorResult extends BaseMod {
 
 		// 渠道信息
 		let channelInfo = null
+		data._id.channel = data._id.channel ? data._id.channel : '1001'
 		const channelKey = data._id.appid + '_' + platformInfo._id + '_' + data._id.channel
 		if (this.channels && this.channels[channelKey]) {
 			channelInfo = this.channels[channelKey]
@@ -398,12 +399,12 @@ module.exports = class ErrorResult extends BaseMod {
 
 		// 版本信息
 		let versionInfo = null
-		const versionKey = data._id.appid + '_' + platformInfo._id + '_' + data._id.version
+		const versionKey = data._id.appid + '_' + data._id.platform + '_' + data._id.version
 		if (this.versions && this.versions[versionKey]) {
 			versionInfo = this.versions[versionKey]
 		} else {
 			const version = new Version()
-			versionInfo = await version.getVersionAndCreate(data._id.appid, platformInfo._id, data._id.version)
+			versionInfo = await version.getVersionAndCreate(data._id.appid, data._id.platform, data._id.version)
 			if (!versionInfo || versionInfo.length === 0) {
 				versionInfo._id = ''
 			}
@@ -416,10 +417,10 @@ module.exports = class ErrorResult extends BaseMod {
 		//app启动次数
 		const sessionLog = new SessionLog()
 		const sessionTimesRes = await this.getCollection(sessionLog.tableName).where({
-			appid: data.appid,
-			version: data.version,
-			platform: data.platform,
-			channel: data.channel,
+			appid: data._id.appid,
+			version: data._id.version,
+			platform: data._id.platform,
+			channel: data._id.channel,
 			create_time: {
 				$gte: this.startTime,
 				$lte: this.endTime
@@ -429,6 +430,9 @@ module.exports = class ErrorResult extends BaseMod {
 		let sessionTimes = 0
 		if(sessionTimesRes && sessionTimesRes.total > 0) {
 			sessionTimes = sessionTimesRes.total
+		} else {
+			console.log('Not found session logs')
+			return false
 		}
 
 
